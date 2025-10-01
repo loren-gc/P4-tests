@@ -1,5 +1,5 @@
 #include <core.p4>
-#include <v1model.p4>
+#include <v1model.p4> // Certifique-se de que essas inclusões estão corretas para o SDE do Tofino
 
 // HEADER
 header ethernet {
@@ -20,14 +20,14 @@ struct metadata {
 }
 
 // PARSER (disassembles the package)
-parser MyParser(packet_in pkt, out AllHeaders hdr, inout metadata meta) {
+parser P(packet_in pkt, out AllHeaders hdr, inout metadata meta) { // Renomeado para P
     state start {
         pkt.extract(hdr.eth);
         transition accept;
     }
 }
 
-control MyIngress(inout AllHeaders hdr, inout metadata meta, inout standard_metadata_t standard_metadata) {
+control ingress(inout AllHeaders hdr, inout metadata meta, inout standard_metadata_t standard_metadata) { // Renomeado para ingress
     // table to learn MAC addresses and its corresponding ports
     table mac_learning_table {
         key = {
@@ -46,7 +46,7 @@ control MyIngress(inout AllHeaders hdr, inout metadata meta, inout standard_meta
         meta.egress_port = port;
         meta.is_unicast = 1;
     }
-    
+
     action set_egress_port_and_learn(bit<9> port) {
         meta.egress_port = port;
         meta.is_unicast = 1;
@@ -70,27 +70,27 @@ control MyIngress(inout AllHeaders hdr, inout metadata meta, inout standard_meta
     }
 }
 
-control MyEgress(inout AllHeaders hdr, inout metadata meta, inout standard_metadata_t standard_metadata) {
+control egress(inout AllHeaders hdr, inout metadata meta, inout standard_metadata_t standard_metadata) { // Renomeado para egress
     apply {
         if (meta.is_unicast == 1) {
             standard_metadata.egress_spec = meta.egress_port;
         } else {
-            standard_metadata.egress_spec = 0xFF; // Broadcats valeu in case of flood
+            standard_metadata.egress_spec = 0xFF; // Um valor mágico que o switch interpretaria como flood
         }
     }
 }
 
 // DEPARSER
-control MyDeparser(packet_out pkt, in AllHeaders hdr) {
+deparser D(packet_out pkt, in AllHeaders hdr) { // Renomeado para D
     apply {
         pkt.emit(hdr.eth);
     }
 }
 
-// PROGRAM INSTANCE
+// PROGRAM INSTANCE - AGORA COM O FORMATO MAIS COMUM PARA V1MODEL
 V1Switch(
-    MyParser(),
-    MyIngress(),
-    MyEgress(),
-    MyDeparser()
-)
+    P(), // Parser
+    ingress(), // Ingress control
+    egress(), // Egress control
+    D() // Deparser
+) main; // O nome 'main' é o nome da sua instância de programa
