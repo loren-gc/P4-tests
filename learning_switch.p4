@@ -1,5 +1,5 @@
 #include <core.p4>
-#include <v1model.p4> // Certifique-se de que essas inclusões estão corretas para o SDE do Tofino
+#include <v1model.p4>
 
 // HEADER
 header ethernet {
@@ -20,14 +20,14 @@ struct metadata {
 }
 
 // PARSER (disassembles the package)
-parser P(packet_in pkt, out AllHeaders hdr, inout metadata meta) { // Renomeado para P
+parser P(packet_in pkt, out AllHeaders hdr, inout metadata meta) {
     state start {
         pkt.extract(hdr.eth);
         transition accept;
     }
 }
 
-control ingress(inout AllHeaders hdr, inout metadata meta, inout standard_metadata_t standard_metadata) { // Renomeado para ingress
+control ingress(inout AllHeaders hdr, inout metadata meta, inout standard_metadata_t standard_metadata) {
     // table to learn MAC addresses and its corresponding ports
     table mac_learning_table {
         key = {
@@ -70,27 +70,27 @@ control ingress(inout AllHeaders hdr, inout metadata meta, inout standard_metada
     }
 }
 
-control egress(inout AllHeaders hdr, inout metadata meta, inout standard_metadata_t standard_metadata) { // Renomeado para egress
+control egress(inout AllHeaders hdr, inout metadata meta, inout standard_metadata_t standard_metadata) {
     apply {
         if (meta.is_unicast == 1) {
             standard_metadata.egress_spec = meta.egress_port;
         } else {
-            standard_metadata.egress_spec = 0xFF; // Um valor mágico que o switch interpretaria como flood
+            standard_metadata.egress_spec = 0xFF;
         }
     }
 }
 
 // DEPARSER
-deparser D(packet_out pkt, in AllHeaders hdr) { // Renomeado para D
+deparser D(packet_out pkt, in AllHeaders hdr) {
     apply {
         pkt.emit(hdr.eth);
     }
 }
 
-// PROGRAM INSTANCE - AGORA COM O FORMATO MAIS COMUM PARA V1MODEL
+// PROGRAM INSTANCE
 V1Switch(
-    P(), // Parser
-    ingress(), // Ingress control
-    egress(), // Egress control
-    D() // Deparser
-) main; // O nome 'main' é o nome da sua instância de programa
+    P(),
+    ingress(),
+    egress(),
+    D()
+) main;
