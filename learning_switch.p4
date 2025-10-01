@@ -20,7 +20,7 @@ struct metadata {
 }
 
 // PARSER (disassembles the package)
-parser MyParser(packet_in pkt, out headers hdr, inout metadata meta) {
+parser MyParser(packet_in pkt, out AllHeaders hdr, inout metadata meta) {
     state start {
         pkt.extract(hdr.eth);
         transition accept;
