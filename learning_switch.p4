@@ -52,39 +52,33 @@ control ingress(inout AllHeaders hdr, inout metadata meta, inout standard_metada
         meta.is_unicast = 1;
     }
 
-    apply {
-        meta.ingress_port = standard_metadata.ingress_port;
-        // Simplifying:
-        // 1. Lookup with destiny MAC address.
-        // 2. If matches, forward.
-        // 3. Else, flood.
+    meta.ingress_port = standard_metadata.ingress_port;
+    // Simplifying:
+    // 1. Lookup with destiny MAC address.
+    // 2. If matches, forward.
+    // 3. Else, flood.
 
-        mac_learning_table.apply();
+    mac_learning_table.apply();
 
-        if (mac_learning_table.hit) {
-        } else {
-            // destiny MAC address unknown - FLOOD
-            meta.egress_port = standard_metadata.recirculate_port;
-            meta.is_unicast = 0;
-        }
+    if (mac_learning_table.hit) {
+    } else {
+        // destiny MAC address unknown - FLOOD
+        meta.egress_port = standard_metadata.recirculate_port;
+        meta.is_unicast = 0;
     }
 }
 
 control egress(inout AllHeaders hdr, inout metadata meta, inout standard_metadata_t standard_metadata) { // Renomeado para egress
-    apply {
-        if (meta.is_unicast == 1) {
-            standard_metadata.egress_spec = meta.egress_port;
-        } else {
-            standard_metadata.egress_spec = 0xFF; // Um valor mágico que o switch interpretaria como flood
-        }
+    if (meta.is_unicast == 1) {
+        standard_metadata.egress_spec = meta.egress_port;
+    } else {
+        standard_metadata.egress_spec = 0xFF; // Um valor mágico que o switch interpretaria como flood
     }
 }
 
 // DEPARSER
 deparser D(packet_out pkt, in AllHeaders hdr) { // Renomeado para D
-    apply {
-        pkt.emit(hdr.eth);
-    }
+    pkt.emit(hdr.eth);
 }
 
 // PROGRAM INSTANCE - AGORA COM O FORMATO MAIS COMUM PARA V1MODEL
