@@ -27,7 +27,7 @@ parser MyParser(packet_in pkt, out AllHeaders hdr, inout metadata meta) {
     }
 }
 
-control MyIngress(inout headers hdr, inout metadata meta, inout standard_metadata_t standard_metadata) {
+control MyIngress(inout AllHeaders hdr, inout metadata meta, inout standard_metadata_t standard_metadata) {
     // table to learn MAC addresses and its corresponding ports
     table mac_learning_table {
         key = {
@@ -70,8 +70,18 @@ control MyIngress(inout headers hdr, inout metadata meta, inout standard_metadat
     }
 }
 
+control MyEgress(inout AllHeaders hdr, inout metadata meta, inout standard_metadata_t standard_metadata) {
+    apply {
+        if (meta.is_unicast == 1) {
+            standard_metadata.egress_spec = meta.egress_port;
+        } else {
+            standard_metadata.egress_spec = 0xFF; // Broadcats valeu in case of flood
+        }
+    }
+}
+
 // DEPARSER
-control MyDeparser(packet_out pkt, in headers hdr) {
+control MyDeparser(packet_out pkt, in AllHeaders hdr) {
     apply {
         pkt.emit(hdr.eth);
     }
@@ -84,4 +94,3 @@ V1Switch(
     MyEgress(),
     MyDeparser()
 )
-
