@@ -3,9 +3,13 @@
 
 // HEADER
 header ethernet {
-    macAddr dstAddr;
-    macAddr srcAddr;
+    bit<48> dstAddr;
+    bit<48> srcAddr;
     bit<16> etherType; // protocol type
+}
+
+struct AllHeaders {
+    ethernet eth;
 }
 
 // METADATA
@@ -18,7 +22,7 @@ struct metadata {
 // PARSER (disassembles the package)
 parser MyParser(packet_in pkt, out headers hdr, inout metadata meta) {
     state start {
-        pkt.extract(hdr.ethernet);
+        pkt.extract(hdr.eth);
         transition accept;
     }
 }
@@ -27,7 +31,7 @@ control MyIngress(inout headers hdr, inout metadata meta, inout standard_metadat
     // table to learn MAC addresses and its corresponding ports
     table mac_learning_table {
         key = {
-            hdr.ethernet.dstAddr : exact @name("dst_mac");
+            hdr.eth.dstAddr : exact @name("dst_mac");
         }
         actions = {
             _NoAction;
@@ -65,4 +69,19 @@ control MyIngress(inout headers hdr, inout metadata meta, inout standard_metadat
         }
     }
 }
+
+// DEPARSER
+control MyDeparser(packet_out pkt, in headers hdr) {
+    apply {
+        pkt.emit(hdr.eth);
+    }
+}
+
+// PROGRAM INSTANCE
+V1Switch(
+    MyParser(),
+    MyIngress(),
+    MyEgress(),
+    MyDeparser()
+)
 
