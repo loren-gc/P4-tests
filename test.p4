@@ -1,22 +1,17 @@
 #include <tna.p4>
 
-struct metadata {
-    // Metadados vazios
-}
+struct metadata { }
+struct headers { }
 
-struct headers {
-    // Cabeçalhos vazios - programa mínimo
-}
-
-parser MyParser(packet_in p, out headers h, inout metadata m, in standard_metadata_t s) {
+parser MyParser(packet_in p, out headers h, inout metadata m, in pna_main_parser_input_metadata_t i) {
     state start { transition accept; }
 }
 
-control MyIngress(inout headers h, inout metadata m, inout standard_metadata_t s) {
-    apply { }
+control MyIngress(inout headers h, inout metadata m, inout pna_main_input_metadata_t i, inout pna_main_output_metadata_t o) {
+    apply { o.egress_spec = 1; }
 }
 
-control MyEgress(inout headers h, inout metadata m, inout standard_metadata_t s) {
+control MyEgress(inout headers h, inout metadata m, inout pna_main_input_metadata_t i, inout pna_main_output_metadata_t o) {
     apply { }
 }
 
@@ -32,11 +27,11 @@ control MyComputeChecksum(inout headers h, inout metadata m) {
     apply { }
 }
 
-V1Switch(
+MainTNA(
     MyParser(),
     MyVerifyChecksum(),
     MyIngress(),
-    MyEgress(),
+    MyEgress(), 
     MyComputeChecksum(),
     MyDeparser()
 ) main;
