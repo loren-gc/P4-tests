@@ -1,37 +1,52 @@
 #include <tna.p4>
 
-struct metadata { }
-struct headers { }
-
-parser MyParser(packet_in p, out headers h, inout metadata m, in pna_main_parser_input_metadata_t i) {
-    state start { transition accept; }
+struct metadata {
 }
 
-control MyIngress(inout headers h, inout metadata m, inout pna_main_input_metadata_t i, inout pna_main_output_metadata_t o) {
-    apply { o.egress_spec = 1; }
+struct headers {
 }
 
-control MyEgress(inout headers h, inout metadata m, inout pna_main_input_metadata_t i, inout pna_main_output_metadata_t o) {
-    apply { }
+parser MyParser(packet_in packet, out headers hdr, inout metadata meta) {
+    state start {
+        transition accept;
+    }
 }
 
-control MyDeparser(packet_out p, in headers h) {
-    apply { }
+control MyIngress(inout headers hdr, inout metadata meta) {
+    action set_egress_port(bit<9> port) {
+        standard_metadata.egress_spec = port;
+    }
+    
+    apply {
+        set_egress_port(1);
+    }
 }
 
-control MyVerifyChecksum(inout headers h, inout metadata m) {
-    apply { }
+control MyEgress(inout headers hdr, inout metadata meta) {
+    apply {
+    }
 }
 
-control MyComputeChecksum(inout headers h, inout metadata m) {
-    apply { }
+control MyDeparser(packet_out packet, in headers hdr) {
+    apply {
+    }
 }
 
-MainTNA(
+control MyVerifyChecksum(inout headers hdr, inout metadata meta) {
+    apply {
+    }
+}
+
+control MyComputeChecksum(inout headers hdr, inout metadata meta) {
+    apply {
+    }
+}
+
+TofinoNativeArchitecture(
     MyParser(),
-    MyVerifyChecksum(),
+    MyVerifyChecksum(), 
     MyIngress(),
-    MyEgress(), 
+    MyEgress(),
     MyComputeChecksum(),
     MyDeparser()
 ) main;
