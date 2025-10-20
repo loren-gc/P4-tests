@@ -6,19 +6,14 @@ struct metadata {
 struct headers {
 }
 
-parser MyParser(packet_in packet, out headers hdr, inout metadata meta) {
+parser MyParser(packet_in pkt, out headers hdr, inout metadata meta) {
     state start {
         transition accept;
     }
 }
 
 control MyIngress(inout headers hdr, inout metadata meta) {
-    action set_egress_port(bit<9> port) {
-        standard_metadata.egress_spec = port;
-    }
-    
     apply {
-        set_egress_port(1);
     }
 }
 
@@ -27,7 +22,7 @@ control MyEgress(inout headers hdr, inout metadata meta) {
     }
 }
 
-control MyDeparser(packet_out packet, in headers hdr) {
+control MyDeparser(packet_out pkt, in headers hdr) {
     apply {
     }
 }
@@ -42,11 +37,12 @@ control MyComputeChecksum(inout headers hdr, inout metadata meta) {
     }
 }
 
-TofinoNativeArchitecture(
-    MyParser(),
-    MyVerifyChecksum(), 
-    MyIngress(),
-    MyEgress(),
-    MyComputeChecksum(),
-    MyDeparser()
-) main;
+// Versão mais simples - apenas instanciando diretamente
+//TofinoNativeArchitecture(
+//    MyParser(),
+//    MyVerifyChecksum(),
+//    MyIngress(),
+//    MyEgress(), 
+//    MyComputeChecksum(),
+//    MyDeparser()
+//) main;
