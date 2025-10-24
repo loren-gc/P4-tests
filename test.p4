@@ -12,6 +12,11 @@ parser MyParser(packet_in pkt, out headers hdr, inout metadata meta) {
     }
 }
 
+control MyVerifyChecksum(inout headers hdr, inout metadata meta) {
+    apply {
+    }
+}
+
 control MyIngress(inout headers hdr, inout metadata meta) {
     apply {
     }
@@ -22,22 +27,16 @@ control MyEgress(inout headers hdr, inout metadata meta) {
     }
 }
 
-control MyDeparser(packet_out pkt, in headers hdr) {
-    apply {
-    }
-}
-
-control MyVerifyChecksum(inout headers hdr, inout metadata meta) {
-    apply {
-    }
-}
-
 control MyComputeChecksum(inout headers hdr, inout metadata meta) {
     apply {
     }
 }
 
-// Versão mais simples - apenas instanciando diretamente
+control MyDeparser(packet_out pkt, in headers hdr) {
+    apply {
+    }
+}
+
 TofinoNativeArchitecture(
     MyParser(),
     MyVerifyChecksum(),
