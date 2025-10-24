@@ -1,13 +1,16 @@
 #include <tna.p4>
 
+// No actual headeers (just for test)
 struct headers {
-    bit<1> dummy; 
+    bit<1> dummy; // dummy format (just for test)
 }
 
+// Data format which will be processed by the Tofino
 struct metadata {
-    bit<1> dummy_meta;
+    bit<1> dummy_meta; // dummy format (just for test)
 }
 
+// Not extracting any headers from the package (jsut testing, passing the package to "accept")
 parser MyIngressParser(
     packet_in pkt,
     out headers ig_hdr,
@@ -19,6 +22,7 @@ parser MyIngressParser(
     }
 };
 
+// No forwarding table being applied (again, just testing) and no actions are being executed
 control MyIngress(
     inout headers ig_hdr,
     inout metadata ig_md,
@@ -31,6 +35,7 @@ control MyIngress(
     }
 };
 
+// Sends directly to the traffic manager, not apllying any serial action
 control MyIngressDeparser(
     packet_out pkt,
     inout headers ig_hdr,
@@ -41,6 +46,7 @@ control MyIngressDeparser(
     }
 };
 
+// Again, no headers are extracted, just passing to acceptt
 parser MyEgressParser(
     packet_in pkt,
     out headers eg_hdr,
@@ -52,6 +58,7 @@ parser MyEgressParser(
     }
 };
 
+// Doesn't write anything in the headers
 control MyEgress(
     inout headers eg_hdr,
     inout metadata eg_md,
@@ -64,6 +71,7 @@ control MyEgress(
     }
 };
 
+// DOESN'T FORWARD THE PACKAGE THROUGHOUT AN EXIT PORT (JUST TESTING)
 control MyEgressDeparser(
     packet_out pkt,
     inout headers eg_hdr,
@@ -74,6 +82,7 @@ control MyEgressDeparser(
     }
 };
 
+// defines the processing flow
 Pipeline(
     MyIngressParser(),
     MyIngress(),
