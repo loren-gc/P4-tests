@@ -38,11 +38,11 @@ control MyComputeChecksum(inout headers hdr, inout metadata meta) {
 }
 
 // Versão mais simples - apenas instanciando diretamente
-//TofinoNativeArchitecture(
-//    MyParser(),
-//    MyVerifyChecksum(),
-//    MyIngress(),
-//    MyEgress(), 
-//    MyComputeChecksum(),
-//    MyDeparser()
-//) main;
+TofinoNativeArchitecture(
+    MyParser(),
+    MyVerifyChecksum(),
+    MyIngress(),
+    MyEgress(), 
+    MyComputeChecksum(),
+    MyDeparser()
+) main;
