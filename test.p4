@@ -50,12 +50,11 @@ control MyDeparser(packet_out pkt, in headers hdr,
     }
 };
 
-Pipeline(
-    MyParser(),
-    MyVerifyChecksum(),
-    MyIngress(),
-    MyEgress(), 
-    MyComputeChecksum(),
-    MyDeparser()) TofinoNativeArchitecture;
+Pipeline(MyParser(),
+        MyVerifyChecksum(),
+        MyIngress(),
+        MyEgress(), 
+        MyComputeChecksum(),
+        MyDeparser()) pipe;
 
-Switch(TofinoNativeArchitecture) main;
+Switch(pipe) main;
