@@ -27,16 +27,16 @@ parser MyIngressParser(
     }
     
     state parse_ethernet {
-        pkt.extract(hdr.ethernet);
-        transition select (hdr.ethernet.ether_type) {
+        pkt.extract(ig_hdr.ethernet);
+        transition select (ig_hdr.ethernet.ether_type) {
             ETHERTYPE_IPV4 : parse_ipv4;
             default : accept;
         }
     }
 
     state parse_ipv4 {
-        pkt.extract(hdr.ipv4);
-        transition select (hdr.ipv4.protocol) {
+        pkt.extract(ig_hdr.ipv4);
+        transition select (ig_hdr.ipv4.protocol) {
 	    IP_PROTOCOLS_TCP : parse_tcp;
 	    IP_PROTOCOLS_UDP : parse_udp;
 	    default : accept;
