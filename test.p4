@@ -44,12 +44,12 @@ parser MyIngressParser(
     }
 
     state parse_tcp {
-	pkt.extract(hdr.tcp);
+	pkt.extract(ig_hdr.tcp);
         transition accept;
     }
  
     state parse_udp {
-	pkt.extract(hdr.udp);
+	pkt.extract(ig_hdr.udp);
         transition accept;
     }
     
