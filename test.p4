@@ -2,19 +2,7 @@
 #include <tna.p4>
 #include "headers.p4"
 
-/*
-// No actual headeers (just for test)
-struct headers {
-    bit<1> dummy; // dummy format (just for test)
-}
-
-// Data format which will be processed by the Tofino
-struct metadata {
-    bit<1> dummy_meta; // dummy format (just for test)
-}
-*/
-
-// Not extracting any headers from the package (jsut testing, passing the package to "accept")
+// Handling TCP and UDP packages
 parser MyIngressParser(
     packet_in pkt,
     out headers_t ig_hdr,
@@ -32,7 +20,7 @@ parser MyIngressParser(
         pkt.extract(ig_hdr.ethernet);
         transition select (ig_hdr.ethernet.ether_type) {
             ETHERTYPE_IPV4 : parse_ipv4;
-            default : accept;
+            default : accept; // If it's not ipv4, just accept the package
         }
     }
 
@@ -41,7 +29,7 @@ parser MyIngressParser(
         transition select (ig_hdr.ipv4.protocol) {
 	    IP_PROTOCOLS_TCP : parse_tcp;
 	    IP_PROTOCOLS_UDP : parse_udp;
-	    default : accept;
+	    default : accept; // If it's not tcp or udp just accept
     	}
     }
 
@@ -57,7 +45,7 @@ parser MyIngressParser(
     
 };
 
-// No forwarding table being applied (again, just testing) and no actions are being executed
+// No forwarding table being applied (just tetsing) and no actions are being executed
 control MyIngress(
     inout headers_t ig_hdr,
     inout metadata_t ig_md,
