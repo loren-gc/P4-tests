@@ -17,9 +17,40 @@ parser MyIngressParser(
     out metadata ig_md,
     out ingress_intrinsic_metadata_t ig_intr_md)
 {
+    
     state start {
+        pkt.extract(ig_intr_md);
+        pkt.advance(PORT_METADATA_SIZE);
+        transition parse_ethernet;
+    }
+    
+    state parse_ethernet {
+        pkt.extract(hdr.ethernet);
+        transition select (hdr.ethernet.ether_type) {
+            ETHERTYPE_IPV4 : parse_ipv4;
+            default : accept;
+        }
+    }
+
+    state parse_ipv4 {
+        pkt.extract(hdr.ipv4);
+        transition select (hdr.ipv4.protocol) {
+	    IP_PROTOCOLS_TCP : parse_tcp;
+	    IP_PROTOCOLS_UDP : parse_udp;
+	    default : accept;
+    	}
+    }
+
+    state parse_tcp {
+	pkt.extract(hdr.tcp);
         transition accept;
     }
+ 
+    state parse_udp {
+	pkt.extract(hdr.udp);
+        transition accept;
+    }
+    
 };
 
 // No forwarding table being applied (again, just testing) and no actions are being executed
