@@ -2,6 +2,7 @@
 #include <tna.p4>
 #include "headers.p4"
 
+/*
 // No actual headeers (just for test)
 struct headers {
     bit<1> dummy; // dummy format (just for test)
@@ -11,6 +12,7 @@ struct headers {
 struct metadata {
     bit<1> dummy_meta; // dummy format (just for test)
 }
+*/
 
 // Not extracting any headers from the package (jsut testing, passing the package to "accept")
 parser MyIngressParser(
