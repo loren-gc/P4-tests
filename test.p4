@@ -60,7 +60,7 @@ parser MyIngressParser(
 // No forwarding table being applied (again, just testing) and no actions are being executed
 control MyIngress(
     inout headers_t ig_hdr,
-    inout metadata ig_md,
+    inout metadata_t ig_md,
     in ingress_intrinsic_metadata_t ig_intr_md,
     in ingress_intrinsic_metadata_from_parser_t ig_prsr_md,
     inout ingress_intrinsic_metadata_for_deparser_t ig_dprsr_md,
@@ -74,7 +74,7 @@ control MyIngress(
 control MyIngressDeparser(
     packet_out pkt,
     inout headers_t ig_hdr,
-    in metadata ig_md,
+    in metadata_t ig_md,
     in ingress_intrinsic_metadata_for_deparser_t ig_dprsr_md)
 {
     apply {
@@ -85,7 +85,7 @@ control MyIngressDeparser(
 parser MyEgressParser(
     packet_in pkt,
     out headers_t eg_hdr,
-    out metadata eg_md,
+    out metadata_t eg_md,
     out egress_intrinsic_metadata_t eg_intr_md)
 {
     state start {
@@ -96,7 +96,7 @@ parser MyEgressParser(
 // Doesn't write anything in the headers
 control MyEgress(
     inout headers_t eg_hdr,
-    inout metadata eg_md,
+    inout metadata_t eg_md,
     in egress_intrinsic_metadata_t eg_intr_md,
     in egress_intrinsic_metadata_from_parser_t eg_prsr_md,
     inout egress_intrinsic_metadata_for_deparser_t eg_dprsr_md,
@@ -110,7 +110,7 @@ control MyEgress(
 control MyEgressDeparser(
     packet_out pkt,
     inout headers_t eg_hdr,
-    in metadata eg_md,
+    in metadata_t eg_md,
     in egress_intrinsic_metadata_for_deparser_t eg_dprsr_md)
 {
     apply {
