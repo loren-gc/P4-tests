@@ -17,8 +17,8 @@ struct metadata {
 // Not extracting any headers from the package (jsut testing, passing the package to "accept")
 parser MyIngressParser(
     packet_in pkt,
-    out headers ig_hdr,
-    out metadata ig_md,
+    out headers_t ig_hdr,
+    out metadata_t ig_md,
     out ingress_intrinsic_metadata_t ig_intr_md)
 {
     
@@ -59,7 +59,7 @@ parser MyIngressParser(
 
 // No forwarding table being applied (again, just testing) and no actions are being executed
 control MyIngress(
-    inout headers ig_hdr,
+    inout headers_t ig_hdr,
     inout metadata ig_md,
     in ingress_intrinsic_metadata_t ig_intr_md,
     in ingress_intrinsic_metadata_from_parser_t ig_prsr_md,
@@ -73,7 +73,7 @@ control MyIngress(
 // Sends directly to the traffic manager, not apllying any serial action
 control MyIngressDeparser(
     packet_out pkt,
-    inout headers ig_hdr,
+    inout headers_t ig_hdr,
     in metadata ig_md,
     in ingress_intrinsic_metadata_for_deparser_t ig_dprsr_md)
 {
@@ -84,7 +84,7 @@ control MyIngressDeparser(
 // Again, no headers are extracted, just passing to acceptt
 parser MyEgressParser(
     packet_in pkt,
-    out headers eg_hdr,
+    out headers_t eg_hdr,
     out metadata eg_md,
     out egress_intrinsic_metadata_t eg_intr_md)
 {
@@ -95,7 +95,7 @@ parser MyEgressParser(
 
 // Doesn't write anything in the headers
 control MyEgress(
-    inout headers eg_hdr,
+    inout headers_t eg_hdr,
     inout metadata eg_md,
     in egress_intrinsic_metadata_t eg_intr_md,
     in egress_intrinsic_metadata_from_parser_t eg_prsr_md,
@@ -109,7 +109,7 @@ control MyEgress(
 // DOESN'T FORWARD THE PACKAGE THROUGHOUT AN EXIT PORT (JUST TESTING)
 control MyEgressDeparser(
     packet_out pkt,
-    inout headers eg_hdr,
+    inout headers_t eg_hdr,
     in metadata eg_md,
     in egress_intrinsic_metadata_for_deparser_t eg_dprsr_md)
 {
