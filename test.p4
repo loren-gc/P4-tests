@@ -1,5 +1,6 @@
 #include <core.p4>
 #include <tna.p4>
+#include "headers.p4"
 
 // No actual headeers (just for test)
 struct headers {
