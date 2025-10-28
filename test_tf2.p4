@@ -106,7 +106,7 @@ control MyEgressDeparser(
 };
 
 // defines the processing flow
-Tofino2NativeArchitecture(
+Pipeline(
     MyIngressParser(),
     MyIngress(),
     MyIngressDeparser(),
